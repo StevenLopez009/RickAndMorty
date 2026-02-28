@@ -1,52 +1,15 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import "./Dashboard.css";
-
-interface Character {
-  id: number;
-  name: string;
-  image: string;
-  species: string;
-  status: string;
-}
+import useFetch from "../../hooks/useFetch";
 
 const Dashboard = () => {
-  const [personaje, setPersonaje] = useState<Character[]>([]);
-  const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<boolean>(false);
   const [inputValue, setInputValue] = useState("");
   const [selectSpecie, setSelectSpecie] = useState("");
-  const [numberPage, setNumberPage] = useState<number>(1);
+  const [numberPage, setNumberPage] = useState(1);
 
-  useEffect(() => {
-    const abortController = new AbortController();
-    const signal = abortController.signal;
-
-    async function fetchData() {
-      setLoading(true);
-      try {
-        const response = await fetch(
-          `https://rickandmortyapi.com/api/character/?page=${numberPage}`,
-          { signal },
-        );
-        if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-        const data = await response.json();
-        setPersonaje(data.results);
-        console.log(personaje);
-        setError(false);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-        setError(true);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    fetchData();
-    return () => abortController.abort();
-  }, [numberPage]);
+  const paramId = `?page=${numberPage}`;
+  const { loading, personaje, error } = useFetch(paramId);
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(event.target.value);
@@ -61,7 +24,6 @@ const Dashboard = () => {
     const matchSpecie = p.species
       .toLowerCase()
       .includes(selectSpecie.toLowerCase());
-
     return matchName && matchSpecie;
   });
 
@@ -109,8 +71,16 @@ const Dashboard = () => {
         ))}
       </ul>
       <div>
-        <button onClick={() => setNumberPage(numberPage - 1)}>Atras</button>
-        <button onClick={() => setNumberPage(numberPage + 1)}>Adelante</button>
+        {numberPage > 1 ? (
+          <button onClick={() => setNumberPage((prev) => prev - 1)}>
+            Atras
+          </button>
+        ) : (
+          <></>
+        )}
+        <button onClick={() => setNumberPage((prev) => prev + 1)}>
+          Adelante
+        </button>
       </div>
     </div>
   );

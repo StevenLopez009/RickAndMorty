@@ -1,0 +1,46 @@
+.detalle-container {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #0f172a; /* fondo oscuro moderno */
+  padding: 2rem;
+}
+
+.detalle-card {
+  display: flex;
+  gap: 3rem;
+  background-color: #1e293b;
+  padding: 2rem;
+  border-radius: 16px;
+  max-width: 1000px;
+  width: 100%;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+}
+
+.detalle-image img {
+  width: 350px;
+  border-radius: 12px;
+  object-fit: cover;
+}
+
+.detalle-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  color: white;
+}
+
+.detalle-info h1 {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+.detalle-info p {
+  font-size: 1.1rem;
+  margin-bottom: 0.8rem;
+}
+
+.detalle-info strong {
+  color: #22c55e;
+}
