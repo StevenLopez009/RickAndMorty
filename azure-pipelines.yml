@@ -1,0 +1,68 @@
+# Usaremos 'stages' en lugar de steps directos.
+# Así separamos claramente la construcción del despliegue.
+
+trigger:
+- main
+
+# Definimos los stages
+stages:
+# ETAPA 1: BUILD (Construcción)
+- stage: Build
+  displayName: '🔨 Build Stage'
+  jobs:
+  - job: BuildJob
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+    - task: NodeTool@0
+      inputs:
+        versionSpec: '18.x'
+      displayName: 'Install Node.js'
+    - script: |
+        npm install
+        npm run build
+      displayName: 'Install and Build'
+    - task: ArchiveFiles@2
+      inputs:
+        rootFolderOrFile: '$(System.DefaultWorkingDirectory)'
+        includeRootFolder: false
+        archiveType: 'zip'
+        archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
+      displayName: 'Zip files'
+    - task: PublishBuildArtifacts@1
+      inputs:
+        PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+        ArtifactName: 'drop'
+      displayName: 'Publish artifact'
+
+# ETAPA 2: DEPLOY (Despliegue)
+- stage: Deploy
+  displayName: '🚀 Deploy Stage'
+  # 'dependsOn' asegura que esta etapa solo se ejecute si la de 'Build' funciona bien
+  dependsOn: Build
+  # 'condition' añade una comprobación extra (opcional, pero segura)
+  condition: succeeded()
+  jobs:
+  - job: DeployJob
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+    # Lo PRIMERO es descargar el artefacto que creamos en la etapa de Build
+    - task: DownloadBuildArtifacts@0
+      inputs:
+        buildType: 'current'
+        downloadType: 'single'
+        artifactName: 'drop'
+        downloadPath: '$(System.ArtifactsDirectory)'
+      displayName: 'Download build artifacts'
+
+    # Usamos la tarea específica para desplegar en Azure App Service
+    - task: AzureWebApp@1
+      inputs:
+        # Es MUY importante configurar bien esto
+        azureSubscription: 'NOMBRE_DE_TU_SERVICIO_CONNECTION_AZURE' # <--- AQUI VA EL NOMBRE
+        appType: 'webAppLinux'     # Tipo de web app (Linux en este ejemplo)
+        appName: 'NOMBRE_DE_TU_APP_SERVICE_EN_AZURE'      # <--- EL NOMBRE DE TU APP SERVICE
+        package: '$(System.ArtifactsDirectory)/**/*.zip'  # Ruta del .zip que descargamos
+        startUpCommand: 'node server.js' # Comando para iniciar tu app (ajústalo)
+      displayName: 'Deploy to Azure App Service'
