@@ -6,6 +6,10 @@ interface Character {
   image: string;
   species: string;
   status: string;
+  gender: string;
+  origin: {
+    name: string;
+  };
 }
 
 const useFetch = (param: string) => {
