@@ -15,7 +15,7 @@ const Dashboard = () => {
     setInputValue(event.target.value);
   };
 
-  const handleSpecieChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleSpecieChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectSpecie(event.target.value);
   };
 
