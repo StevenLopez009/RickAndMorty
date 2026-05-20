@@ -4,32 +4,49 @@ import "./DetallePersonaje.css";
 
 const DetallePersonaje = () => {
   const { id } = useParams();
+
+  // validar id
+  if (!id) {
+    return <p>ID no encontrado</p>;
+  }
+
   const paramId = id.toString();
+
   const { loading, detailPersonaje, error } = useFetch(paramId);
+
+  // obtener primer personaje si viene como array
+  const personaje = Array.isArray(detailPersonaje)
+    ? detailPersonaje[0]
+    : detailPersonaje;
+
   return (
     <div className="detalle-container">
       {loading && <p>Cargando...</p>}
       {error && <p>Error al cargar datos</p>}
 
-      {!loading && !error && detailPersonaje && (
+      {!loading && !error && personaje && (
         <div className="detalle-card">
           <div className="detalle-image">
-            <img src={detailPersonaje.image} alt={detailPersonaje.name} />
+            <img src={personaje.image} alt={personaje.name} />
           </div>
 
           <div className="detalle-info">
-            <h1>{detailPersonaje.name}</h1>
+            <h1>{personaje.name}</h1>
+
             <p>
-              <strong>Especie:</strong> {detailPersonaje.species}
+              <strong>Especie:</strong> {personaje.species}
             </p>
+
             <p>
-              <strong>Estado:</strong> {detailPersonaje.status}
+              <strong>Estado:</strong> {personaje.status}
             </p>
+
             <p>
-              <strong>Género:</strong> {detailPersonaje.gender}
+              <strong>Género:</strong> {personaje.gender}
             </p>
+
             <p>
-              <strong>Origen:</strong> {detailPersonaje.origin?.name}
+              <strong>Origen:</strong> {personaje.origin?.name}
             </p>
           </div>
         </div>
