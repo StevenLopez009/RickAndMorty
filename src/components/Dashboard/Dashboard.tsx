@@ -33,7 +33,7 @@ const Dashboard = () => {
 
   return (
     <div>
-      <h1>Title</h1>
+      <h1>Title CI/CD</h1>
       <input type="text" value={inputValue} onChange={handleInputChange} />
       <select name="species" onChange={handleSpecieChange} value={selectSpecie}>
         <option value="">Todas</option>
