@@ -16,7 +16,9 @@ const useFetch = (param: string) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [personaje, setPersonaje] = useState<Character[]>([]);
   const [error, setError] = useState<boolean>(false);
-  const [detailPersonaje, setDetailPersonaje] = useState<Character[]>([]);
+  const [detailPersonaje, setDetailPersonaje] = useState<Character | null>(
+    null,
+  );
 
   useEffect(() => {
     const abortController = new AbortController();
